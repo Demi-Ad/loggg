@@ -1,0 +1,74 @@
+spring:
+  profiles:
+    default: in_memory
+
+logging:
+  level:
+    jdbc:
+      sqlonly: warn
+      sqltiming: warn
+      resultsettable: warn
+      audit: warn
+      resultset: warn
+      connection: warn
+---
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:log_db
+    username: sa
+    password:
+
+    hikari:
+      auto-commit: false
+
+  config:
+    activate:
+      on-profile: in_memory
+  jpa:
+    properties:
+      hibernate:
+        search:
+#          mapping:
+#            configurer: class:com.example.logserver.HibernateSearchMappingConfigurer
+          schema_management.strategy: drop-and-create-and-drop
+          backend:
+            analysis.configurer: class:com.example.logserver.config.LuceneAnalyser
+            directory.type: local-heap
+        jdbc:
+          lob:
+            non_contextual: true
+        format_sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+---
+
+spring:
+  datasource:
+    url: jdbc:h2:~/log_db
+    username: sa
+    password:
+
+    hikari:
+      auto-commit: false
+
+  config:
+    activate:
+      on-profile: embedded
+  jpa:
+    properties:
+      hibernate:
+        search:
+          schema_management.strategy: drop-and-create
+          backend:
+            analysis.configurer: class:com.example.logserver.config.LuceneAnalyser
+            directory.root: ./indexed
+        jdbc:
+          lob:
+            non_contextual: true
+        format_sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+---

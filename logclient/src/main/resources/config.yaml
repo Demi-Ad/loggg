@@ -1,0 +1,9 @@
+ip: 127.0.0.1
+port: 2777
+
+watch:
+  - path: C:\Temp\test\log.txt
+    service: apache
+
+  - path: C:\Temp\test2\log.txt
+    service: logging2
