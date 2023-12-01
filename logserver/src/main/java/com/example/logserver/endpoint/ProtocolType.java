@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ProtocolType {
 
 
-    TCP("tcp"), HTTP("http"), WS("ws");
+    TCP("tcp"), HTTP("http");
 
     private final String str;
 

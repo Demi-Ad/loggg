@@ -18,6 +18,7 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.config.EnablePublisher;
 import org.springframework.integration.graph.IntegrationGraphServer;
 import org.springframework.integration.handler.BridgeHandler;
+import org.springframework.integration.http.inbound.CrossOrigin;
 import org.springframework.integration.http.inbound.HttpRequestHandlingMessagingGateway;
 import org.springframework.integration.http.inbound.RequestMapping;
 import org.springframework.integration.ip.tcp.TcpInboundGateway;
@@ -145,6 +146,9 @@ public class IntegrationConfig {
         requestMapping.setConsumes("application/json");
         requestMapping.setProduces("application/json");
         httpRequestHandlingMessagingGateway.setRequestMapping(requestMapping);
+        CrossOrigin crossOrigin = new CrossOrigin();
+        crossOrigin.setOrigin("*");
+        httpRequestHandlingMessagingGateway.setCrossOrigin(crossOrigin);
         return httpRequestHandlingMessagingGateway;
     }
 

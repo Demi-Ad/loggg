@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 
 public class TimeStampGenerateUtil {
 
-    public static String get() {
+    public static long get() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        return timestamp.toString();
+        return timestamp.getTime();
     }
 }

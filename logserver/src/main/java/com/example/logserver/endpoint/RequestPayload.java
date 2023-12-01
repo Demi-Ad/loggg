@@ -7,7 +7,7 @@ public class RequestPayload {
     private String log;
     private String remoteIp;
     private String service;
-    private String timestamp;
+    private long timestamp;
     private ProtocolType type;
 
 

@@ -33,8 +33,8 @@ public class Log {
     private String log;
 
     @Column(name = "timestamp")
-    @KeywordField(name = "timestamp", sortable = Sortable.YES, projectable = Projectable.YES)
-    private String timestamp;
+    @GenericField(name = "timestamp", sortable = Sortable.YES, projectable = Projectable.YES)
+    private long timestamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "protocol")
@@ -54,8 +54,8 @@ public class Log {
 
     public Log(RequestPayload payload) {
         this.log = payload.getLog();
-        if (!StringUtils.hasText(payload.getTimestamp())) {
-            this.timestamp = new Timestamp(System.currentTimeMillis()).toString();
+        if (payload.getTimestamp() == 0L) {
+            this.timestamp = new Timestamp(System.currentTimeMillis()).getTime();
         } else {
             this.timestamp = payload.getTimestamp();
         }

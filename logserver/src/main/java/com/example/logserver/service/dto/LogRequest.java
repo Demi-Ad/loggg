@@ -1,5 +1,6 @@
 package com.example.logserver.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -13,5 +14,6 @@ public class LogRequest {
     private int pageNumber = 0;
     private int pageSize = 10;
     private RequestType type = RequestType.FULL_TEXT;
-    private Map<String,Integer> props = new HashMap<>();
+    private RequestProps props;
+    private RequestSearchTime searchTime;
 }

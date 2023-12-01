@@ -9,7 +9,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Projection
 public class LogResponse {
 
     private String service;
-    private String timestamp;
+    private long timestamp;
     private String log;
     private String remoteIp;
     private ProtocolType protocolType;
@@ -18,7 +18,7 @@ public class LogResponse {
     @ProjectionConstructor
     public LogResponse(@FieldProjection(path = "logger.service") String service,
                        @FieldProjection(path = "log") String log,
-                       @FieldProjection(path = "timestamp") String timestamp,
+                       @FieldProjection(path = "timestamp") long timestamp,
                        @FieldProjection(path = "protocol") ProtocolType protocolType,
                        @FieldProjection(path = "remote_ip") String remoteIp) {
         this.service = service;

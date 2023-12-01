@@ -10,5 +10,5 @@ import java.util.UUID;
 public class RequestPayload {
     private String log;
     private String service;
-    private String timestamp = TimeStampGenerateUtil.get();
+    private long timestamp = TimeStampGenerateUtil.get();
 }

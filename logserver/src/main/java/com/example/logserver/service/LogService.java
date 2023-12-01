@@ -62,7 +62,7 @@ public class LogService {
         return template.query(sql, mapSqlParameterSource, (rs, rowNum) -> {
             LogResponse logResponse = new LogResponse();
             logResponse.setLog(rs.getString("log"));
-            logResponse.setTimestamp(rs.getString("timestamp"));
+            logResponse.setTimestamp(rs.getLong("timestamp"));
             logResponse.setService(rs.getString("service"));
             logResponse.setProtocolType(ProtocolType.valueOf(rs.getString("protocol").toUpperCase()));
             logResponse.setRemoteIp(rs.getString("remote_ip"));

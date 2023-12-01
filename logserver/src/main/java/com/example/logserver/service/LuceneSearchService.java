@@ -3,19 +3,19 @@ package com.example.logserver.service;
 import com.example.logserver.entity.Log;
 import com.example.logserver.service.dto.LogRequest;
 import com.example.logserver.service.dto.LogResponse;
+import com.example.logserver.service.dto.SearchTimeType;
+import io.micrometer.observation.Observation;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.search.engine.search.predicate.SearchPredicate;
-import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
-import org.hibernate.search.engine.search.predicate.dsl.MatchPredicateOptionsStep;
-import org.hibernate.search.engine.search.predicate.dsl.PhrasePredicateOptionsStep;
-import org.hibernate.search.engine.search.predicate.dsl.RegexpQueryFlag;
+import org.hibernate.search.engine.search.predicate.dsl.*;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.scope.SearchScope;
 import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.hibernate.search.util.common.data.Range;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -73,11 +73,11 @@ public class LuceneSearchService {
                                     .toPredicate()
                     );
             case FUZZY -> {
-                if (request.getProps().isEmpty()) {
+                if (request.getProps() == null) {
                     booleanClauses.must(matching.fuzzy().toPredicate());
                 } else {
-                    Integer maxEditDistance = request.getProps().get("maxEditDistance");
-                    Integer exactPrefixLength = request.getProps().getOrDefault("exactPrefixLength", 0);
+                    int maxEditDistance = request.getProps().getMaxEditDistance();
+                    int exactPrefixLength = request.getProps().getExactPrefixLength();
 
                     booleanClauses.must(matching.fuzzy(maxEditDistance, exactPrefixLength).toPredicate());
 
@@ -85,18 +85,42 @@ public class LuceneSearchService {
             }
             case PHRASE -> {
                 PhrasePredicateOptionsStep<?> pharse = scope.predicate().phrase().field("log").matching(keyword);
-                Integer slop = request.getProps().getOrDefault("slop", -1);
+                int slop = request.getProps().getSlop();
                 if (slop != -1) {
                     booleanClauses.must(pharse.slop(slop).toPredicate());
                 } else {
                     booleanClauses.must(pharse.toPredicate());
                 }
             }
-            case WILDCARD -> booleanClauses.must(scope.predicate().wildcard().field("log").matching(keyword).toPredicate());
-            case REGEXP -> booleanClauses.must(scope.predicate().regexp().field("log").matching(keyword).flags(RegexpQueryFlag.values()).toPredicate());
+            case WILDCARD ->
+                    booleanClauses.must(scope.predicate().wildcard().field("log").matching(keyword).toPredicate());
+            case REGEXP ->
+                    booleanClauses.must(scope.predicate().regexp().field("log").matching(keyword).flags(RegexpQueryFlag.values()).toPredicate());
             case TERM -> booleanClauses.must(scope.predicate().terms().field("log").matchingAny(keyword).toPredicate());
         }
 
+
+        RangePredicateFieldMoreStep<?, ?> rangeQuery = scope.predicate().range().field("timestamp");
+
+        if (!request.getSearchTime().getType().equals(SearchTimeType.NONE)) {
+            switch (request.getSearchTime().getType()) {
+                case BETWEEN -> booleanClauses.filter(
+                        () -> rangeQuery
+                                .range(Range.between(request.getSearchTime().getStartTimestamp(), request.getSearchTime().getEndTimestamp()))
+                                .toPredicate()
+                );
+                case GRATER -> booleanClauses.filter(
+                        () -> rangeQuery
+                                .range(Range.atMost(request.getSearchTime().getStartTimestamp()))
+                                .toPredicate()
+                );
+                case LESS -> booleanClauses.filter(
+                        () -> rangeQuery
+                                .range(Range.atLeast(request.getSearchTime().getEndTimestamp()))
+                                .toPredicate()
+                );
+            }
+        }
 
 
         SearchPredicate predicate = booleanClauses.toPredicate();
@@ -104,6 +128,7 @@ public class LuceneSearchService {
         SearchResult<LogResponse> fetch = searchSession.search(Log.class)
                 .select(LogResponse.class)
                 .where(predicate)
+                .sort(scope.sort().field("timestamp").asc().toSort())
                 .fetch((int) pageRequest.getOffset(), pageRequest.getPageSize());
 
         return new PageImpl<>(fetch.hits(), pageRequest, fetch.total().hitCount());
