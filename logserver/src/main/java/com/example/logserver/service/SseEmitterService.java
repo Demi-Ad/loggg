@@ -2,6 +2,7 @@ package com.example.logserver.service;
 
 import com.example.logserver.entity.Log;
 import com.example.logserver.entity.Logger;
+import com.example.logserver.service.dto.LogResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.MessageEndpoint;
@@ -66,7 +67,15 @@ public class SseEmitterService {
                 .filter(sseEmitterWrapper -> sseEmitterWrapper.getKey().equals(service))
                 .forEach(emitter -> {
                     try {
-                        SseEmitter.SseEventBuilder event = SseEmitter.event().name("log").data(payload.getLog());
+                        LogResponse logResponse = new LogResponse();
+
+                        logResponse.setLog(payload.getLog());
+                        logResponse.setService(service);
+                        logResponse.setRemoteIp(payload.getRemoteIp());
+                        logResponse.setProtocolType(payload.getType());
+                        logResponse.setTimestamp(payload.getTimestamp());
+
+                        SseEmitter.SseEventBuilder event = SseEmitter.event().name("log").data(logResponse);
                         emitter.send(event);
                     } catch (Exception e) {
                         emitter.completeWithError(e);

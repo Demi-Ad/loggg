@@ -3,10 +3,11 @@ spring:
     hikari:
       auto-commit: false
   profiles:
-    default: in_memory
+    default: memory
     group:
       memory : mem_db, mem_idx
       embedded : emd_db, emd_idx
+      mysql_em : mysql, mem_idx
   jpa:
     properties:
       hibernate:
@@ -92,7 +93,7 @@ spring:
         search:
           schema_management.strategy: drop-and-create
           backend:
-            directory.root: ./indexed
+            directory.root: /Temp/indexed
 ---
 
 ---

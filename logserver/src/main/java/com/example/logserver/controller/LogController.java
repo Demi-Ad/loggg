@@ -54,7 +54,7 @@ public class LogController {
     }
 
     @GetMapping("/log/tail")
-    public List<LogResponse> logTail(@RequestParam String service, @RequestParam int size) {
+    public List<LogResponse> logTail(@RequestParam String service, @RequestParam(defaultValue = "10") int size) {
         return logService.tailLogs(service, size);
     }
 }

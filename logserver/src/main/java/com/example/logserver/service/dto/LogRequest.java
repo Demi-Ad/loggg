@@ -14,6 +14,6 @@ public class LogRequest {
     private int pageNumber = 0;
     private int pageSize = 10;
     private RequestType type = RequestType.FULL_TEXT;
-    private RequestProps props;
-    private RequestSearchTime searchTime;
+    private RequestProps props = new RequestProps();
+    private RequestSearchTime searchTime = new RequestSearchTime();
 }

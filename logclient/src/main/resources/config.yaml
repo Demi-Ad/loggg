@@ -1,7 +1,7 @@
-ip: 127.0.0.1
-port: 2777
+ip: 127.0.0.1 # server ip
+port: 2777 # server tcp port
 
-watch:
+watch: # read file path and service name
   - path: C:\Temp\test\log.txt
     service: apache
 

@@ -37,7 +37,7 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
     implementation 'javax.cache:cache-api:1.0.0' // expiry 기능을 위해 필요
     runtimeOnly 'com.h2database:h2'
-
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
     implementation "org.springframework.integration:spring-integration-ip:6.2.0"
     implementation "org.springframework.integration:spring-integration-http:6.2.0"
@@ -62,5 +62,9 @@ tasks.named('test') {
 }
 
 tasks.named('resolveMainClassName').configure {
+    dependsOn('jandex')
+}
+
+tasks.named('compileTestJava').configure {
     dependsOn('jandex')
 }

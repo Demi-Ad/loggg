@@ -4,7 +4,6 @@ import com.example.logserver.entity.Log;
 import com.example.logserver.service.dto.LogRequest;
 import com.example.logserver.service.dto.LogResponse;
 import com.example.logserver.service.dto.SearchTimeType;
-import io.micrometer.observation.Observation;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +97,11 @@ public class LuceneSearchService {
                     booleanClauses.must(scope.predicate().wildcard().field("log").matching(keyword).toPredicate());
             case REGEXP ->
                     booleanClauses.must(scope.predicate().regexp().field("log").matching(keyword).flags(RegexpQueryFlag.values()).toPredicate());
-            case TERM -> booleanClauses.must(scope.predicate().terms().field("log").matchingAny(keyword).toPredicate());
+            case TERM_ALL ->
+                    booleanClauses.must(scope.predicate().terms().field("log").matchingAll(Arrays.asList(keyword.split(" "))).toPredicate());
+            case TERM_ANY ->
+                    booleanClauses.must(scope.predicate().terms().field("log").matchingAny(Arrays.asList(keyword.split(" "))).toPredicate());
+
         }
 
 

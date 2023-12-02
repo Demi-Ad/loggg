@@ -15,7 +15,7 @@ public class RequestProps {
     private int maxEditDistance = 0;
     private int exactPrefixLength = 0;
     private int slop = -1;
-    private boolean hasProperty = true;
+    private boolean hasProperty = false;
 
 
     @JsonCreator
@@ -29,14 +29,17 @@ public class RequestProps {
             RequestProps requestProps = new RequestProps();
 
             if (StringUtils.hasText(maxEditDistance)) {
+                requestProps.hasProperty = true;
                 requestProps.setMaxEditDistance(Integer.parseInt(maxEditDistance));
             }
 
             if (StringUtils.hasText(exactPrefixLength)) {
+                requestProps.hasProperty = true;
                 requestProps.setExactPrefixLength(Integer.parseInt(exactPrefixLength));
             }
 
             if (StringUtils.hasText(slop)) {
+                requestProps.hasProperty = true;
                 requestProps.setSlop(Integer.parseInt(slop));
             }
             return requestProps;
