@@ -1,10 +1,9 @@
 package com.example.logserver.controller;
 
-import com.example.logserver.entity.Log;
 import com.example.logserver.service.*;
 import com.example.logserver.service.dto.LogRequest;
 import com.example.logserver.service.dto.LogResponse;
-import com.example.logserver.service.dto.LoggerResponse;
+import com.example.logserver.service.dto.ServiceResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,8 +40,8 @@ public class LogController {
         return ResponseEntity.ok().body(emitter);
     }
 
-    @GetMapping("/logger/list")
-    public Page<LoggerResponse> loggerList(Pageable pageable) {
+    @GetMapping("/service/list")
+    public Page<ServiceResponse> serviceList(Pageable pageable) {
         return loggerService.findAll(pageable);
     }
 

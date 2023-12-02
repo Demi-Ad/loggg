@@ -3,7 +3,7 @@ package com.example.logserver.service;
 import com.example.logserver.endpoint.RequestPayload;
 import com.example.logserver.entity.Logger;
 import com.example.logserver.repo.LoggerRepository;
-import com.example.logserver.service.dto.LoggerResponse;
+import com.example.logserver.service.dto.ServiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ public class LoggerService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LoggerResponse> findAll(Pageable pageable) {
+    public Page<ServiceResponse> findAll(Pageable pageable) {
         return loggerRepository.findAllToResponse(pageable);
     }
 }
